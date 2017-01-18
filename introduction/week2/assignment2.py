@@ -27,9 +27,29 @@ answer_four()
 
 #answer five
 def answer_five():
-#     df = census_df[census_df['SUMLEV'] == 50]
-#     df = df.set_index(['STNAME', 'CTYNAME'])
-#     df = df.groupby('STNAME')
-#     df['size'] = df.size()
     return census_df.groupby('STNAME')['CTYNAME'].size().argmax()
 answer_five()
+
+#answer six
+def answer_six():
+    return census_df.groupby('STNAME')['CENSUS2010POP'].max().nlargest(3).index.tolist()
+answer_six()
+
+#answer seven
+def answer_seven():
+    df = census_df[(census_df['SUMLEV'] == 50)].set_index('CTYNAME')
+    df['maxpop'] = df[['POPESTIMATE2010','POPESTIMATE2011','POPESTIMATE2012','POPESTIMATE2013','POPESTIMATE2014','POPESTIMATE2015']].max(axis=1)
+    df['minpop'] = df[['POPESTIMATE2010','POPESTIMATE2011','POPESTIMATE2012','POPESTIMATE2013','POPESTIMATE2014','POPESTIMATE2015']].min(axis=1)
+    df['Diff'] = df['maxpop'] - df['minpop']
+    df.sort(['Diff'], inplace=True, ascending=False)
+    return df.iloc[0].name
+answer_seven()
+
+#answer eight
+def answer_eight():
+    df = census_df[((census_df['REGION'] == 1) | (census_df['REGION'] == 2)) & (census_df['POPESTIMATE2015'] > census_df['POPESTIMATE2014']) & (census_df['CTYNAME'].str.startswith('Washington'))]
+    columns_to_keep = ['STNAME', 'CTYNAME']
+    df = df[columns_to_keep]
+    df.sort(inplace=True, ascending=True)
+    return df
+answer_eight()
